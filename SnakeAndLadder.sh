@@ -3,13 +3,13 @@ start=0
 player1=0
 echo "Position of player is $player1"
 win=100
-winner=100
+diceReport=0
 while [[ $player1 -lt $win ]]
 do
 function dice(){
-	diceValue=$(($((RANDOM % 6)) + 1))
-	echo "Value of rolled dice :"$diceValue
-	return $diceValue
+        diceValue=$(($((RANDOM % 6)) + 1))
+        echo "Value of rolled dice :"$diceValue
+        return $diceValue
 }
 dice
 diceCap=$?
@@ -19,34 +19,42 @@ Ladder=1
 Snake=2
 
 function board(){
-	option=$((RANDOM % 3))
-	if [[ $option -eq $No_play ]]
-	then
-		echo
-		echo "No play: No change in the position"
-	elif [[ $option -eq $Ladder ]]
-	then
-		echo
-		echo "Reached a ladder"
-		previous=$player1
-		player1=$(($player1 + $diceCap))
-		if [[ $player1 -gt $winner ]]
-		then
-			player1=$previous
-		fi
-	elif [[ $option -eq $Snake ]]
-	then
-		echo
-		echo "Eaten by a snake"
-		player1=$(($player1 - $diceCap))
-		if [[ $player1 -lt $start ]]
-		then
-			player1=$start
-		fi
-	fi
-	echo "Player Position  $player1"
+        option=$((RANDOM % 3))
+        if [[ $option -eq $No_play ]]
+        then
+                echo
+                echo "No play: No change in the position"
+        elif [[ $option -eq $Ladder ]]
+        then
+                echo
+                echo "Reached a ladder"
+                previous=$player1
+                player1=$(($player1 + $diceCap))
+                if [[ $player1 -gt $win ]]
+                then
+                        player1=$previous
+                fi
+        elif [[ $option -eq $Snake ]]
+        then
+                echo
+                echo "Eaten by a snake"
+                player1=$(($player1 - $diceCap))
+                if [[ $player1 -lt $start ]]
+                then
+                        player1=$start
+                fi
+        fi
+        echo "Player Position  $player1"
 echo
 echo
 }
 board
+declare -a position
+position[$diceReport]=$player1
+let "diceReport+=1"
+done
+echo "The number of times dice was rolled is $diceReport"
+for (( i=0; i<$diceReport; i++))
+do
+        echo "Position was :${position[$i]} after dice roll :$i"
 done
