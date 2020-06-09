@@ -15,7 +15,7 @@ function game(){
         output=$((RANDOM % 3))
         if [[ $output -eq $No_play ]]
         then
-                zero=0
+                start=0
         elif [[ $output -eq $Ladder ]]
         then
                 dice
