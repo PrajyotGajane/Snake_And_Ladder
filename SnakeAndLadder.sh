@@ -1,60 +1,56 @@
 echo "Welcome to snake and ladder game"
 start=0
-player1=0
-echo "Position of player is $player1"
+echo "Player One at $start position and Player Two at $start position"
+function dice(){
+ diceValue=$((RANDOM % 6 + 1))
+}
 win=100
 diceReport=0
-while [[ $player1 -lt $win ]]
-do
-function dice(){
-        diceValue=$(($((RANDOM % 6)) + 1))
-        echo "Value of rolled dice :"$diceValue
-        return $diceValue
-}
-dice
-diceCap=$?
-# 0 is No Play, 1 is Ladder, 2 is a Snake
-No_play=0
-Ladder=1
-Snake=2
+function game(){
+        player=$1
+        No_play=0
+        Ladder=1
+        Snake=2
 
-function board(){
-        option=$((RANDOM % 3))
-        if [[ $option -eq $No_play ]]
+        output=$((RANDOM % 3))
+        if [[ $output -eq $No_play ]]
         then
-                echo
-                echo "No play: No change in the position"
-        elif [[ $option -eq $Ladder ]]
+                zero=0
+        elif [[ $output -eq $Ladder ]]
         then
-                echo
-                echo "Reached a ladder"
-                previous=$player1
-                player1=$(($player1 + $diceCap))
-                if [[ $player1 -gt $win ]]
+                dice
+                player=$(($player + $diceValue))
+                if [[ $player -gt $win ]]
                 then
-                        player1=$previous
+                        player=$(($player - $diceValue))
                 fi
-        elif [[ $option -eq $Snake ]]
+                game $player
+        elif [[ $output -eq $Snake ]]
         then
-                echo
-                echo "Eaten by a snake"
-                player1=$(($player1 - $diceCap))
-                if [[ $player1 -lt $start ]]
+                dice
+                player=$(($player - $diceValue))
+                if [[ $player -lt $start ]]
                 then
-                        player1=$start
+                        player=$start
                 fi
         fi
-        echo "Player Position  $player1"
-echo
-echo
+return $player
 }
-board
-declare -a position
-position[$diceReport]=$player1
-let "diceReport+=1"
-done
-echo "The number of times dice was rolled is $diceReport"
-for (( i=0; i<$diceReport; i++))
+player1=0
+player2=0
+while [[ $player1 -ne $win && $player2 -ne $win ]]
 do
-        echo "Position was :${position[$i]} after dice roll :$i"
+        game $player1
+        player1=$?
+
+        game $player2
+        player2=$?
 done
+echo "Player one is at $player1 and Player two is at $player2"
+
+if [[ $player1 -eq $win ]]
+then
+	echo "Player One is the winner"
+else
+	echo "Player Two is the winner"
+fi
